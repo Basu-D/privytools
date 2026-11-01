@@ -50,6 +50,7 @@
       color: #8b949e;
       margin: 20px 0;
       font-size: 13px;
+      display: none; /* hidden by default */
     }
     .tabs {
       display: flex;
@@ -101,6 +102,7 @@
       padding: 20px;
       text-align: center;
       margin-top: 32px;
+      display: none; /* hidden by default */
     }
     .donation a {
       display: inline-block;
@@ -137,8 +139,8 @@
       🔒 All processing happens locally on your device. No files are ever uploaded to any server.
     </div>
 
-    <!-- Top ad placeholder -->
-    <div class="ad-placeholder">
+    <!-- Top ad placeholder (hidden until SHOW_MONETIZATION = true) -->
+    <div class="ad-placeholder" id="ad-top">
       <!-- Replace this div with your Google AdSense or other ad code -->
       Advertisement placeholder (top)
     </div>
@@ -220,14 +222,14 @@
       <div id="b64-status" class="status"></div>
     </div>
 
-    <!-- Bottom ad placeholder -->
-    <div class="ad-placeholder">
+    <!-- Bottom ad placeholder (hidden until SHOW_MONETIZATION = true) -->
+    <div class="ad-placeholder" id="ad-bottom">
       <!-- Replace this div with your Google AdSense or other ad code -->
       Advertisement placeholder (bottom)
     </div>
 
-    <!-- Donation section -->
-    <div class="donation">
+    <!-- Donation section (hidden until SHOW_MONETIZATION = true) -->
+    <div class="donation" id="donation">
       <h3>Support PrivyTools</h3>
       <p>If these tools save you time, consider supporting the project. No ads required — just a one-time coffee.</p>
       <a href="https://www.buymeacoffee.com/" target="_blank" rel="noopener">☕ Buy me a coffee</a>
@@ -242,6 +244,18 @@
 
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script>
+    // ============================================================
+    // MONETIZATION TOGGLE
+    // Set to true later when you want to show ads + Buy Me a Coffee
+    // ============================================================
+    const SHOW_MONETIZATION = false;
+
+    if (SHOW_MONETIZATION) {
+      document.querySelectorAll('.ad-placeholder, .donation').forEach(el => {
+        el.style.display = 'block';
+      });
+    }
+
     const { PDFDocument, degrees } = PDFLib;
 
     // Tabs

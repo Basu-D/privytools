@@ -50,7 +50,7 @@
       color: #8b949e;
       margin: 20px 0;
       font-size: 13px;
-      display: none; /* hidden by default */
+      display: none;
     }
     .tabs {
       display: flex;
@@ -70,6 +70,22 @@
     .tab.active { background: var(--accent); color: #0d1117; border-color: var(--accent); }
     .panel { display: none; background: var(--card); border: 1px solid var(--border); border-radius: 12px; padding: 24px; }
     .panel.active { display: block; }
+    .drop-zone {
+      border: 2px dashed #30363d;
+      border-radius: 12px;
+      padding: 40px 20px;
+      text-align: center;
+      color: #8b949e;
+      margin: 12px 0 16px;
+      transition: border-color 0.2s, background 0.2s;
+      cursor: pointer;
+    }
+    .drop-zone.dragover {
+      border-color: var(--accent);
+      background: rgba(88, 166, 255, 0.08);
+      color: var(--text);
+    }
+    .drop-zone strong { color: var(--accent); }
     label { display: block; margin: 12px 0 6px; font-weight: 500; }
     input[type="file"], input[type="number"], select, button {
       width: 100%;
@@ -81,6 +97,7 @@
       font-size: 14px;
       box-sizing: border-box;
     }
+    input[type="file"] { display: none; }
     button {
       background: var(--accent);
       color: #0d1117;
@@ -95,6 +112,11 @@
     .status { margin-top: 12px; padding: 10px; border-radius: 6px; display: none; }
     .status.success { background: #1c3a2e; display: block; }
     .status.error { background: #3a1c1c; display: block; }
+    .download-btn {
+      display: none;
+      margin-top: 12px;
+      background: #238636;
+    }
     .donation {
       background: var(--card);
       border: 1px solid var(--border);
@@ -102,7 +124,7 @@
       padding: 20px;
       text-align: center;
       margin-top: 32px;
-      display: none; /* hidden by default */
+      display: none;
     }
     .donation a {
       display: inline-block;
@@ -114,7 +136,6 @@
       font-weight: 600;
       margin-top: 8px;
     }
-    .donation a:hover { opacity: 0.9; }
     footer {
       text-align: center;
       margin-top: 40px;
@@ -139,11 +160,7 @@
       🔒 All processing happens locally on your device. No files are ever uploaded to any server.
     </div>
 
-    <!-- Top ad placeholder (hidden until SHOW_MONETIZATION = true) -->
-    <div class="ad-placeholder" id="ad-top">
-      <!-- Replace this div with your Google AdSense or other ad code -->
-      Advertisement placeholder (top)
-    </div>
+    <div class="ad-placeholder" id="ad-top">Advertisement placeholder (top)</div>
 
     <div class="tabs">
       <button class="tab active" data-tab="merge">Merge PDFs</button>
@@ -156,20 +173,25 @@
     <!-- Merge PDFs -->
     <div id="merge" class="panel active">
       <h2>Merge PDFs</h2>
-      <p>Select multiple PDF files to combine them into one. Order is the order you select them.</p>
-      <label>Select PDFs</label>
+      <p>Drop PDF files here or click to select. They will be combined in the order you add them.</p>
+      <div class="drop-zone" id="merge-drop">
+        <strong>Drop PDFs here</strong><br>or click to select
+      </div>
       <input type="file" id="merge-files" accept="application/pdf" multiple>
       <div id="merge-list" class="file-list"></div>
       <button id="merge-btn">Merge PDFs</button>
       <div id="merge-status" class="status"></div>
+      <button id="merge-download" class="download-btn">Download merged.pdf</button>
     </div>
 
     <!-- Rotate PDF -->
     <div id="rotate" class="panel">
       <h2>Rotate PDF Pages</h2>
-      <label>Select PDF</label>
+      <div class="drop-zone" id="rotate-drop">
+        <strong>Drop a PDF here</strong><br>or click to select
+      </div>
       <input type="file" id="rotate-file" accept="application/pdf">
-      <label>Rotation (degrees)</label>
+      <label>Rotation</label>
       <select id="rotate-angle">
         <option value="90">90°</option>
         <option value="180">180°</option>
@@ -177,12 +199,15 @@
       </select>
       <button id="rotate-btn">Rotate</button>
       <div id="rotate-status" class="status"></div>
+      <button id="rotate-download" class="download-btn">Download rotated.pdf</button>
     </div>
 
     <!-- Image Tools -->
     <div id="images" class="panel">
       <h2>Image Compress / Convert / Resize</h2>
-      <label>Select Image</label>
+      <div class="drop-zone" id="img-drop">
+        <strong>Drop an image here</strong><br>or click to select
+      </div>
       <input type="file" id="img-file" accept="image/*">
       <label>Max width (px, 0 = no resize)</label>
       <input type="number" id="img-width" value="1920" min="0">
@@ -196,24 +221,30 @@
       </select>
       <button id="img-btn">Process Image</button>
       <div id="img-status" class="status"></div>
+      <button id="img-download" class="download-btn">Download processed image</button>
       <div id="img-preview" style="margin-top:12px;"></div>
     </div>
 
     <!-- Images to PDF -->
     <div id="img2pdf" class="panel">
       <h2>Images to PDF</h2>
-      <p>Select one or more images to create a PDF.</p>
-      <label>Select Images</label>
+      <div class="drop-zone" id="img2pdf-drop">
+        <strong>Drop images here</strong><br>or click to select
+      </div>
       <input type="file" id="img2pdf-files" accept="image/*" multiple>
       <div id="img2pdf-list" class="file-list"></div>
       <button id="img2pdf-btn">Create PDF</button>
       <div id="img2pdf-status" class="status"></div>
+      <button id="img2pdf-download" class="download-btn">Download images.pdf</button>
     </div>
 
     <!-- Base64 -->
     <div id="base64" class="panel">
       <h2>Base64 Encode / Decode</h2>
-      <label>File or text</label>
+      <label>File</label>
+      <div class="drop-zone" id="b64-drop">
+        <strong>Drop a file here</strong><br>or click to select
+      </div>
       <input type="file" id="b64-file">
       <label>Or paste text / base64</label>
       <textarea id="b64-text" rows="6" style="width:100%;background:#0d1117;color:var(--text);border:1px solid var(--border);border-radius:6px;padding:10px;font-family:monospace;"></textarea>
@@ -222,18 +253,12 @@
       <div id="b64-status" class="status"></div>
     </div>
 
-    <!-- Bottom ad placeholder (hidden until SHOW_MONETIZATION = true) -->
-    <div class="ad-placeholder" id="ad-bottom">
-      <!-- Replace this div with your Google AdSense or other ad code -->
-      Advertisement placeholder (bottom)
-    </div>
+    <div class="ad-placeholder" id="ad-bottom">Advertisement placeholder (bottom)</div>
 
-    <!-- Donation section (hidden until SHOW_MONETIZATION = true) -->
     <div class="donation" id="donation">
       <h3>Support PrivyTools</h3>
-      <p>If these tools save you time, consider supporting the project. No ads required — just a one-time coffee.</p>
+      <p>If these tools save you time, consider supporting the project.</p>
       <a href="https://www.buymeacoffee.com/" target="_blank" rel="noopener">☕ Buy me a coffee</a>
-      <p style="margin-top:12px;font-size:13px;color:#8b949e;">Replace the link above with your real Buy Me a Coffee / Ko-fi / GitHub Sponsors URL.</p>
     </div>
 
     <footer>
@@ -244,16 +269,9 @@
 
   <script src="https://unpkg.com/pdf-lib@1.17.1/dist/pdf-lib.min.js"></script>
   <script>
-    // ============================================================
-    // MONETIZATION TOGGLE
-    // Set to true later when you want to show ads + Buy Me a Coffee
-    // ============================================================
     const SHOW_MONETIZATION = false;
-
     if (SHOW_MONETIZATION) {
-      document.querySelectorAll('.ad-placeholder, .donation').forEach(el => {
-        el.style.display = 'block';
-      });
+      document.querySelectorAll('.ad-placeholder, .donation').forEach(el => el.style.display = 'block');
     }
 
     const { PDFDocument, degrees } = PDFLib;
@@ -274,18 +292,31 @@
       el.className = 'status ' + (isError ? 'error' : 'success');
     }
 
-    function downloadBlob(blob, filename) {
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement('a');
-      a.href = url;
-      a.download = filename;
-      a.click();
-      URL.revokeObjectURL(url);
+    function setupDropZone(dropId, inputId, multiple = false) {
+      const drop = document.getElementById(dropId);
+      const input = document.getElementById(inputId);
+      drop.addEventListener('click', () => input.click());
+      drop.addEventListener('dragover', e => { e.preventDefault(); drop.classList.add('dragover'); });
+      drop.addEventListener('dragleave', () => drop.classList.remove('dragover'));
+      drop.addEventListener('drop', e => {
+        e.preventDefault();
+        drop.classList.remove('dragover');
+        input.files = e.dataTransfer.files;
+        input.dispatchEvent(new Event('change'));
+      });
     }
+
+    // Setup drop zones
+    setupDropZone('merge-drop', 'merge-files', true);
+    setupDropZone('rotate-drop', 'rotate-file');
+    setupDropZone('img-drop', 'img-file');
+    setupDropZone('img2pdf-drop', 'img2pdf-files', true);
+    setupDropZone('b64-drop', 'b64-file');
 
     // Merge
     const mergeInput = document.getElementById('merge-files');
     const mergeList = document.getElementById('merge-list');
+    let mergeBlob = null;
     mergeInput.addEventListener('change', () => {
       mergeList.innerHTML = Array.from(mergeInput.files).map(f => `• ${f.name} (${(f.size/1024).toFixed(1)} KB)`).join('<br>');
     });
@@ -302,14 +333,24 @@
           pages.forEach(p => merged.addPage(p));
         }
         const out = await merged.save();
-        downloadBlob(new Blob([out], { type: 'application/pdf' }), 'merged.pdf');
-        showStatus('merge-status', 'Done! Download started.');
+        mergeBlob = new Blob([out], { type: 'application/pdf' });
+        document.getElementById('merge-download').style.display = 'block';
+        showStatus('merge-status', 'Ready! Click the download button.');
       } catch (e) {
         showStatus('merge-status', 'Error: ' + e.message, true);
       }
     });
+    document.getElementById('merge-download').addEventListener('click', () => {
+      if (mergeBlob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(mergeBlob);
+        a.download = 'merged.pdf';
+        a.click();
+      }
+    });
 
     // Rotate
+    let rotateBlob = null;
     document.getElementById('rotate-btn').addEventListener('click', async () => {
       const file = document.getElementById('rotate-file').files[0];
       if (!file) return showStatus('rotate-status', 'Please select a PDF.', true);
@@ -318,17 +359,26 @@
         showStatus('rotate-status', 'Rotating...');
         const bytes = await file.arrayBuffer();
         const pdf = await PDFDocument.load(bytes);
-        const pages = pdf.getPages();
-        pages.forEach(page => page.setRotation(degrees(angle)));
+        pdf.getPages().forEach(page => page.setRotation(degrees(angle)));
         const out = await pdf.save();
-        downloadBlob(new Blob([out], { type: 'application/pdf' }), 'rotated.pdf');
-        showStatus('rotate-status', 'Done! Download started.');
+        rotateBlob = new Blob([out], { type: 'application/pdf' });
+        document.getElementById('rotate-download').style.display = 'block';
+        showStatus('rotate-status', 'Ready! Click the download button.');
       } catch (e) {
         showStatus('rotate-status', 'Error: ' + e.message, true);
       }
     });
+    document.getElementById('rotate-download').addEventListener('click', () => {
+      if (rotateBlob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(rotateBlob);
+        a.download = 'rotated.pdf';
+        a.click();
+      }
+    });
 
     // Images
+    let imgBlob = null;
     document.getElementById('img-btn').addEventListener('click', async () => {
       const file = document.getElementById('img-file').files[0];
       if (!file) return showStatus('img-status', 'Please select an image.', true);
@@ -346,18 +396,18 @@
         }
         canvas.width = w;
         canvas.height = h;
-        const ctx = canvas.getContext('2d');
-        ctx.drawImage(img, 0, 0, w, h);
+        canvas.getContext('2d').drawImage(img, 0, 0, w, h);
         canvas.toBlob(blob => {
           if (!blob) return showStatus('img-status', 'Failed to process image.', true);
+          imgBlob = blob;
           const ext = format.split('/')[1];
-          downloadBlob(blob, `processed.${ext}`);
-          showStatus('img-status', `Done! Original: ${(file.size/1024).toFixed(1)} KB → ${(blob.size/1024).toFixed(1)} KB`);
+          document.getElementById('img-download').style.display = 'block';
+          document.getElementById('img-download').textContent = `Download processed.${ext}`;
+          showStatus('img-status', `Done! ${(file.size/1024).toFixed(1)} KB → ${(blob.size/1024).toFixed(1)} KB`);
           const preview = document.getElementById('img-preview');
           preview.innerHTML = '';
-          const url = URL.createObjectURL(blob);
           const imgEl = document.createElement('img');
-          imgEl.src = url;
+          imgEl.src = URL.createObjectURL(blob);
           imgEl.style.maxWidth = '100%';
           imgEl.style.borderRadius = '8px';
           preview.appendChild(imgEl);
@@ -366,10 +416,19 @@
         showStatus('img-status', 'Error: ' + e.message, true);
       }
     });
+    document.getElementById('img-download').addEventListener('click', () => {
+      if (imgBlob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(imgBlob);
+        a.download = document.getElementById('img-download').textContent.replace('Download ', '');
+        a.click();
+      }
+    });
 
     // Images to PDF
     const img2pdfInput = document.getElementById('img2pdf-files');
     const img2pdfList = document.getElementById('img2pdf-list');
+    let img2pdfBlob = null;
     img2pdfInput.addEventListener('change', () => {
       img2pdfList.innerHTML = Array.from(img2pdfInput.files).map(f => `• ${f.name}`).join('<br>');
     });
@@ -381,37 +440,38 @@
         const pdf = await PDFDocument.create();
         for (const file of files) {
           const bytes = await file.arrayBuffer();
-          let image;
-          if (file.type === 'image/png') {
-            image = await pdf.embedPng(bytes);
-          } else {
-            image = await pdf.embedJpg(bytes);
-          }
+          const image = file.type === 'image/png' ? await pdf.embedPng(bytes) : await pdf.embedJpg(bytes);
           const page = pdf.addPage([image.width, image.height]);
           page.drawImage(image, { x: 0, y: 0, width: image.width, height: image.height });
         }
         const out = await pdf.save();
-        downloadBlob(new Blob([out], { type: 'application/pdf' }), 'images.pdf');
-        showStatus('img2pdf-status', 'Done! Download started.');
+        img2pdfBlob = new Blob([out], { type: 'application/pdf' });
+        document.getElementById('img2pdf-download').style.display = 'block';
+        showStatus('img2pdf-status', 'Ready! Click the download button.');
       } catch (e) {
         showStatus('img2pdf-status', 'Error: ' + e.message + ' (supports JPEG/PNG)', true);
       }
     });
+    document.getElementById('img2pdf-download').addEventListener('click', () => {
+      if (img2pdfBlob) {
+        const a = document.createElement('a');
+        a.href = URL.createObjectURL(img2pdfBlob);
+        a.download = 'images.pdf';
+        a.click();
+      }
+    });
 
-    // Base64
+    // Base64 (unchanged logic, just drop zone added)
     document.getElementById('b64-encode').addEventListener('click', async () => {
       const file = document.getElementById('b64-file').files[0];
       const text = document.getElementById('b64-text').value;
       try {
-        let data;
         if (file) {
-          data = await file.arrayBuffer();
-          const b64 = btoa(String.fromCharCode(...new Uint8Array(data)));
-          document.getElementById('b64-text').value = b64;
+          const data = await file.arrayBuffer();
+          document.getElementById('b64-text').value = btoa(String.fromCharCode(...new Uint8Array(data)));
           showStatus('b64-status', 'Encoded file to Base64.');
         } else if (text) {
-          const b64 = btoa(unescape(encodeURIComponent(text)));
-          document.getElementById('b64-text').value = b64;
+          document.getElementById('b64-text').value = btoa(unescape(encodeURIComponent(text)));
           showStatus('b64-status', 'Encoded text to Base64.');
         } else {
           showStatus('b64-status', 'Provide a file or text.', true);
@@ -424,8 +484,7 @@
       const text = document.getElementById('b64-text').value.trim();
       if (!text) return showStatus('b64-status', 'Paste Base64 first.', true);
       try {
-        const decoded = decodeURIComponent(escape(atob(text)));
-        document.getElementById('b64-text').value = decoded;
+        document.getElementById('b64-text').value = decodeURIComponent(escape(atob(text)));
         showStatus('b64-status', 'Decoded successfully.');
       } catch (e) {
         showStatus('b64-status', 'Invalid Base64 or binary data.', true);

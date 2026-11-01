@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>About — PrivyTools</title>
+  <style>
+    :root {
+      --bg: #0f1419;
+      --card: #1a2332;
+      --text: #e6edf3;
+      --accent: #58a6ff;
+      --border: #30363d;
+    }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: var(--bg);
+      color: var(--text);
+      margin: 0;
+      padding: 20px;
+      line-height: 1.6;
+    }
+    .container { max-width: 800px; margin: 0 auto; }
+    h1 { text-align: center; }
+    .nav {
+      display: flex;
+      gap: 16px;
+      justify-content: center;
+      margin: 20px 0 32px;
+      font-size: 14px;
+    }
+    .nav a { color: var(--accent); text-decoration: none; }
+    .nav a:hover { text-decoration: underline; }
+    .card {
+      background: var(--card);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 28px;
+    }
+    a { color: var(--accent); }
+    footer { text-align: center; margin-top: 40px; color: #8b949e; font-size: 13px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h1>About PrivyTools</h1>
+    <div class="nav">
+      <a href="index.html">Tools</a>
+      <a href="about.html">About</a>
+      <a href="privacy.html">Privacy Policy</a>
+    </div>
+
+    <div class="card">
+      <p>PrivyTools is a free, privacy-first collection of file utilities that run entirely in your web browser.</p>
+
+      <h2>Why this exists</h2>
+      <p>Most online PDF and image tools require you to upload your files to a remote server. That creates privacy risks, slow uploads, file size limits, and accounts you don’t want. PrivyTools does the opposite: all processing happens locally on your device using JavaScript. Your files never leave your computer.</p>
+
+      <h2>Current tools</h2>
+      <ul>
+        <li>Merge PDFs</li>
+        <li>Rotate PDF pages</li>
+        <li>Image compress, resize, and convert</li>
+        <li>Images to PDF</li>
+        <li>Base64 encode / decode</li>
+      </ul>
+
+      <h2>How it works</h2>
+      <p>The site uses open-source libraries (mainly <a href="https://pdf-lib.js.org/" target="_blank" rel="noopener">pdf-lib</a>) and the browser’s native Canvas API. Nothing is sent to any server.</p>
+
+      <h2>Support</h2>
+      <p>If the tools are useful, you can support the project via the donation link on the main page. Ads may also appear to help cover hosting and future development — they are clearly marked and do not affect the privacy of your files.</p>
+    </div>
+
+    <footer>
+      <a href="index.html">Back to tools</a>
+    </footer>
+  </div>
+</body>
+</html>
